@@ -1,0 +1,7 @@
+body{
+  --scale: 2;
+}
+
+#gamemap{
+  border: 1px solid black;
+}
