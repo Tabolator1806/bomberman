@@ -1,4 +1,4 @@
-import { init, send } from './connection'
+import { init, send, websocket } from './connection'
 
 init()
 document.querySelector("#send")?.addEventListener("click", () => { send() })
@@ -10,26 +10,36 @@ mapscale = 3
 
 const gameMap: HTMLCanvasElement = document.querySelector("#gamemap") as HTMLCanvasElement
 
-gameMap.width = 31 * mapscale * 16
-gameMap.height = 13 * mapscale * 16
+const spriteSize = 16
 
-class MapDraw {
-   Draw(canvas: HTMLCanvasElement, spritesheet: HTMLImageElement): void {
-      spritesheet.addEventListener("load", () => {
-         let context = canvas.getContext("2d") as CanvasRenderingContext2D
-         for (let x = 0; x <= 31; x++) {
-            for (let y = 0; y <= 13; y++) {
-               if (x == 0 || y == 0 || x == 30 || y == 12)
-                  context.drawImage(spritesheet, 16 * 3, 16 * 3, 16, 16, 16 * x * mapscale, 16 * y * mapscale, 16 * mapscale, 16 * mapscale)
-               else
-                  context.drawImage(spritesheet, 0, 16*5, 16, 16, 16 * x * mapscale, 16 * y * mapscale, 16 * mapscale, 16 * mapscale)
-            }
-         }
-         context.drawImage(spritesheet, 16 * 4, 0, 16, 16, 16 * mapscale, 16 * mapscale, 16 * mapscale, 16 * mapscale)
-      })
+export class MapDraw {
+   Draw(data: string): void {
+      let context = gameMap.getContext("2d") as CanvasRenderingContext2D
+      var dataArray = JSON.parse(data)
+      gameMap.width = dataArray.gamedata.mapdata.mapWidth * mapscale * spriteSize
+      gameMap.height = dataArray.gamedata.mapdata.mapHeight * mapscale * spriteSize
+      dataArray.gamedata.mapdata.mapLayout.forEach((element: Object) => {
+         spritesheet.addEventListener("load",()=>{
+            context.drawImage(spritesheet,
+               spriteSize * element.spritex,
+               spriteSize * element.spritey,
+               spriteSize,
+               spriteSize +1,
+               spriteSize * element.x * mapscale,
+               spriteSize * element.y * mapscale  ,
+               spriteSize * mapscale,
+               spriteSize * mapscale)
+         })
+         });
    }
 }
-
-let mapDraw = new MapDraw()
-
-mapDraw.Draw(gameMap, spritesheet)
+websocket.onmessage = function (ev) {
+   let mapDraw = new MapDraw
+   if (ev.data != "")
+      try { //PHP sends Json data
+         mapDraw.Draw(ev.data);
+      } catch (error) {
+         //console.error(error);
+         //console.log(ev.data);
+      }
+};
