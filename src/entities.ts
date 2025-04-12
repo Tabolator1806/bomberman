@@ -11,7 +11,8 @@ abstract class Entity{
 
 class Ballon extends Entity{
     public currentFrame: number = 0
-    public frameDuration = 120
+    public frameData: number[] = [0,1,2,1]
+    public frameDuration = 10
     public currentTick = 0
     public nextx:number
     public nexty:number
@@ -29,27 +30,31 @@ class Ballon extends Entity{
         this.spritesheet = spritesheet
         this.spriteSize = spriteSize
         this.mapscale = mapscale
+        
     }
-    Draw(){
+    Draw(i:number){
         this.ctx.drawImage(
             this.spritesheet,
-            this.spriteSize * this.currentFrame,
+            this.spriteSize * this.frameData[i] + (this.x<this.nextx ? 3 : 0)*this.spriteSize,
             this.spriteSize * 15,
             this.spriteSize,
             this.spriteSize,
             this.spriteSize * this.x * this.mapscale,
-            this.spriteSize * this.y * this.mapscale  ,
+            this.spriteSize * this.y * this.mapscale,
             this.spriteSize * this.mapscale,
             this.spriteSize * this.mapscale
         )
     }
     GoAnim(){
-        if (this.x<this.nextx){
-            this.Draw()
-            
+        this.Draw(this.currentFrame)
+        this.currentTick+=1
+        if(this.currentTick==this.frameDuration){
+            this.currentFrame+=1
+            this.currentTick=0
         }
-        else{
-            
+        if(this.currentFrame==this.frameData.length){
+            console.log(this.currentTick)
+            this.currentFrame=0
         }
     }
 }
