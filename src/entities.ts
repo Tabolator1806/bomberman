@@ -1,8 +1,8 @@
 abstract class Entity{
     public x:number
     public y:number
+    abstract currentFrame:number
     public hp = 1
-    abstract sprites:Array<Array<number>>
     constructor(x:number,y:number){
         this.x=x
         this.y=y
@@ -10,51 +10,47 @@ abstract class Entity{
 }
 
 class Ballon extends Entity{
-    public sprites: number[][] = [[0,15],[1,15],[2,15],[3,15],[4,15],[5,15]]
+    public currentFrame: number = 0
+    public frameDuration = 120
+    public currentTick = 0
     public nextx:number
     public nexty:number
-    constructor(x:number,y:number,nextx:number,nexty:number){
+    public ctx:CanvasRenderingContext2D
+    public spritesheet:HTMLImageElement
+    public spriteSize:number
+    public mapscale:number
+    constructor(x:number,y:number,nextx:number,nexty:number,ctx:CanvasRenderingContext2D,spritesheet:HTMLImageElement,spriteSize:number,mapscale:number){
         super(x,y)
         this.x=x
         this.y=y
         this.nextx=nextx
         this.nexty=nexty
+        this.ctx = ctx
+        this.spritesheet = spritesheet
+        this.spriteSize = spriteSize
+        this.mapscale = mapscale
     }
-    Draw(ctx:CanvasRenderingContext2D,spritesheet:HTMLImageElement,spriteSize:number,mapscale:number){
-        if(this.x>this.nextx){
-            for(let i = 0; i<=2; i++){
-                ctx.drawImage(
-                    spritesheet,
-                    spriteSize * this.sprites[i][0],
-                    spriteSize * this.sprites[i][1],
-                    spriteSize,
-                    spriteSize,
-                    spriteSize * this.x * mapscale,
-                    spriteSize * this.y * mapscale  ,
-                    spriteSize * mapscale,
-                    spriteSize * mapscale
-                )
-                if(i==2)
-                    i=0
-            }
+    Draw(){
+        this.ctx.drawImage(
+            this.spritesheet,
+            this.spriteSize * this.currentFrame,
+            this.spriteSize * 15,
+            this.spriteSize,
+            this.spriteSize,
+            this.spriteSize * this.x * this.mapscale,
+            this.spriteSize * this.y * this.mapscale  ,
+            this.spriteSize * this.mapscale,
+            this.spriteSize * this.mapscale
+        )
+    }
+    GoAnim(){
+        if (this.x<this.nextx){
+            this.Draw()
+            
         }
         else{
-            for(let i = 3; i<=5; i++){
-                ctx.drawImage(
-                    spritesheet,
-                    spriteSize * this.sprites[i][0],
-                    spriteSize * this.sprites[i][1],
-                    spriteSize,
-                    spriteSize,
-                    spriteSize * this.x * mapscale,
-                    spriteSize * this.y * mapscale  ,
-                    spriteSize * mapscale,
-                    spriteSize * mapscale
-                )
-                if(i==5)
-                    i=0
-            }
+            
         }
-        
     }
 }
+export {Ballon}

@@ -1,12 +1,12 @@
 import { init, send, websocket } from './connection'
+import {Ballon} from './entities'
 
 init()
 document.querySelector("#send")?.addEventListener("click", () => { send() })
 
 const spritesheet = document.createElement("img")
 spritesheet.src = "src/SpriteSheet.png"
-let mapscale = Number(window.getComputedStyle(document.body).getPropertyValue('--scale'))
-mapscale = 3
+let mapscale = 3
 
 const gameMap: HTMLCanvasElement = document.querySelector("#gamemap") as HTMLCanvasElement
 const entityMap: HTMLCanvasElement = document.querySelector("#entitymap") as HTMLCanvasElement
@@ -36,10 +36,15 @@ export class Map {
 	EntityCreate(data:string):void{
 		let context = entityMap.getContext("2d") as CanvasRenderingContext2D
 		var dataArray = JSON.parse(data)
+		console.log(dataArray.gamedata.mapdata.mapWidth)
 		entityMap.width = dataArray.gamedata.mapdata.mapWidth * mapscale * spriteSize
 		entityMap.height = dataArray.gamedata.mapdata.mapHeight * mapscale * spriteSize
-		dataArray.gamedata.entitydata.entitiesLayout.forEach((element: Object) => {
-
+		// console.log(dataArray.gamedata.entitydata.entityLayout)
+		dataArray.gamedata.entitydata.entityLayout.forEach((element: Object) => {
+			context.reset()
+			const a = new Ballon(element.x,element.y,element.nextx,element.nexty,context,spritesheet,spriteSize,mapscale)
+			console.log(a)
+			a.Draw()
 		});
 	}
 }
@@ -47,7 +52,7 @@ websocket.onmessage = function (ev) {
 	let mapDraw = new Map
 	if (ev.data != "")
 		try { //PHP sends Json data
-			console.log(JSON.parse(ev.data))
+			// console.log(JSON.parse(ev.data))
 			mapDraw.MapDraw(ev.data);
 			mapDraw.EntityCreate(ev.data);
 		} catch (error) {
