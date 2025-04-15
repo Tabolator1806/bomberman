@@ -47,8 +47,10 @@ export class Map {
 			ballonArray.push(a)
 		});
 		let anim = function(){
-			ballonArray.forEach(el=>
-				el.GoAnim()
+			context.reset()
+			ballonArray.forEach(el=>{
+					el.GoAnim()
+				}
 			)
 			setTimeout(window.requestAnimationFrame,1000/60,anim)
 		}
