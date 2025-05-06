@@ -2,10 +2,10 @@ body{
   --scale: 2;
 }
 
-#gamemap, #entitymap{
+#gamemap, .entitymap{
   border: 1px solid black;
   position: absolute;
 }
-#entitymap{
+.entitymap{
   z-index: 100;
 }

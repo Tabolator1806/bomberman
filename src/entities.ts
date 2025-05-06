@@ -52,6 +52,7 @@ class Ballon extends Entity{
             this.x>this.nextx ? this.transx-=1/60 : this.transx+=1/60
         if(this.y!=this.nexty&&Math.abs(this.transy)<=1)
             this.y>this.nexty ? this.transy-=1/60 : this.transy+=1/60
+        
         this.currentTick+=1
         if(this.currentTick==this.frameDuration){
             this.currentFrame+=1

@@ -9,11 +9,34 @@ spritesheet.src = "src/SpriteSheet.png"
 let mapscale = 3
 
 const gameMap: HTMLCanvasElement = document.querySelector("#gamemap") as HTMLCanvasElement
-const entityMap: HTMLCanvasElement = document.querySelector("#entitymap") as HTMLCanvasElement
-
+// const entityMap: HTMLCanvasElement = document.querySelector(".entitymap") as HTMLCanvasElement
 const spriteSize = 16
 
+let ballonArray:Ballon[] = []
+let canvasArray:HTMLCanvasElement[] = []
+let canvasonce = true
 export class Map {
+	CanvasDraw(data:string):void{
+		if (canvasonce){
+			var dataArray = JSON.parse(data)
+			console.log(dataArray.gamedata.entitydata.entityLayout.length)
+			canvasArray = []
+			for(let i=0; i<=dataArray.gamedata.entitydata.entityLayout.length; i++){
+				const canvas = document.createElement("canvas") as HTMLCanvasElement
+				canvasArray.push(canvas)
+				canvas.width = dataArray.gamedata.mapdata.mapWidth * mapscale * spriteSize
+				canvas.height = dataArray.gamedata.mapdata.mapHeight * mapscale * spriteSize
+				canvas.classList.add("entitymap")
+				// console.log(canvas)
+			}
+				canvasArray.forEach(canvas1=>{
+					document.body.appendChild(canvas1)
+				})
+				canvasonce=false
+		}
+			
+		
+	}
 	MapDraw(data: string): void {
 		let context = gameMap.getContext("2d") as CanvasRenderingContext2D
 		var dataArray = JSON.parse(data)
@@ -34,38 +57,38 @@ export class Map {
 		});
 	}
 	EntityCreate(data:string):void{
-		let context = entityMap.getContext("2d") as CanvasRenderingContext2D
 		var dataArray = JSON.parse(data)
-		// console.log(dataArray.gamedata.mapdata.mapWidth)
-		entityMap.width = dataArray.gamedata.mapdata.mapWidth * mapscale * spriteSize
-		entityMap.height = dataArray.gamedata.mapdata.mapHeight * mapscale * spriteSize
-		// console.log(dataArray.gamedata.entitydata.entityLayout)
-		context.reset()
-		let ballonArray:Ballon[] = []
-		dataArray.gamedata.entitydata.entityLayout.forEach((element: Object) => {
+		dataArray.gamedata.entitydata.entityLayout.forEach((element: Object,i:number) => {
+			console.log(canvasArray[i])
+			let context = canvasArray[i].getContext("2d") as CanvasRenderingContext2D
 			const a = new Ballon(element.x,element.y,element.nextx,element.nexty,context,spritesheet,spriteSize,mapscale)
 			ballonArray.push(a)
 		});
-		let anim = function(){
-			context.reset()
-			ballonArray.forEach(el=>{
-					el.GoAnim()
-				}
-			)
-			setTimeout(window.requestAnimationFrame,1000/60,anim)
-		}
-		spritesheet.onload = ()=>{
-			anim()
-		}
+		
 	}
 }
+let anim = function(){
+	ballonArray.forEach((el,i)=>{
+			el.ctx.reset()
+			el.GoAnim()
+			// console.log("||",el.x,",",el.y)
+		}
+	)
+	setTimeout(window.requestAnimationFrame,1000/60,anim)
+}
+setTimeout(() => {
+	anim()
+}, 100);
+
+let mapDraw = new Map
 websocket.onmessage = function (ev) {
-	let mapDraw = new Map
 	if (ev.data != "")
 		try { //PHP sends Json data
 			// console.log(JSON.parse(ev.data))
+			mapDraw.CanvasDraw(ev.data)
 			mapDraw.MapDraw(ev.data);
 			mapDraw.EntityCreate(ev.data);
+			// spritesheet.onload=()=>mapDraw.CanvasDraw(ev.data)
 		} catch (error) {
 			//console.error(error);
 			//console.log(ev.data);
