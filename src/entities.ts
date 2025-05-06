@@ -25,8 +25,8 @@ abstract class Entity{
 
 class Ballon extends Entity{
     public currentFrame: number = 0
-    public frameData: number[] = [0,1,2,1]
-    public frameDuration = 5
+    public frameData: number[] = [0,2,1]
+    public frameDuration = 20
     public currentTick = 0
     public nextx:number
     public nexty:number
@@ -66,7 +66,7 @@ class Ballon extends Entity{
             this.x>this.nextx ? this.transx-=1/framerate : this.transx+=1/framerate
         if(this.y!=this.nexty)
             this.y>this.nexty ? this.transy-=1/framerate : this.transy+=1/framerate
-        // console.log(framerate)
+        
         this.currentTick+=1
         if(this.currentTick==this.frameDuration){
             this.currentFrame+=1

@@ -78,9 +78,14 @@ export class Map {
 		
 	}
 }
+let average = 0
+let averageCount = 0
 let anim = function(){
-	// console.log(gameLoop())
 	let framrate = gameLoop()
+	average += framrate
+	averageCount+=1
+	let fpsCounter = document.querySelector("#fps") as HTMLParagraphElement
+	fpsCounter.innerText = `${average/averageCount} fps`
 	ballonArray.forEach((el,i)=>{
 			el.ctx.reset()
 			el.GoAnim(framrate)
