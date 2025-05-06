@@ -1,3 +1,17 @@
+import data from './global.json' with {type:"json"}
+
+
+var lastLoop = new Date()
+
+function gameLoop(){
+  // ...
+  let thisLoop = new Date()
+  var thisFrameTime = Number(thisLoop) - Number(lastLoop);
+  lastLoop = thisLoop;
+  return 1000/thisFrameTime
+}
+
+
 abstract class Entity{
     public x:number
     public y:number
@@ -12,7 +26,7 @@ abstract class Entity{
 class Ballon extends Entity{
     public currentFrame: number = 0
     public frameData: number[] = [0,1,2,1]
-    public frameDuration = 10
+    public frameDuration = 5
     public currentTick = 0
     public nextx:number
     public nexty:number
@@ -46,13 +60,13 @@ class Ballon extends Entity{
             this.spriteSize * this.mapscale
         )
     }
-    GoAnim(){
+    GoAnim(framerate:number){
         this.Draw(this.currentFrame)
-        if(this.x!=this.nextx&&Math.abs(this.transx)<=1)
-            this.x>this.nextx ? this.transx-=1/60 : this.transx+=1/60
-        if(this.y!=this.nexty&&Math.abs(this.transy)<=1)
-            this.y>this.nexty ? this.transy-=1/60 : this.transy+=1/60
-        
+        if(this.x!=this.nextx)
+            this.x>this.nextx ? this.transx-=1/framerate : this.transx+=1/framerate
+        if(this.y!=this.nexty)
+            this.y>this.nexty ? this.transy-=1/framerate : this.transy+=1/framerate
+        // console.log(framerate)
         this.currentTick+=1
         if(this.currentTick==this.frameDuration){
             this.currentFrame+=1

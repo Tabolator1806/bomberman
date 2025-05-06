@@ -1,6 +1,6 @@
 import { init, send, websocket } from './connection'
 import {Ballon} from './entities'
-
+import data from './global.json' with {type:"json"}
 init()
 document.querySelector("#send")?.addEventListener("click", () => { send() })
 
@@ -11,6 +11,17 @@ let mapscale = 3
 const gameMap: HTMLCanvasElement = document.querySelector("#gamemap") as HTMLCanvasElement
 // const entityMap: HTMLCanvasElement = document.querySelector(".entitymap") as HTMLCanvasElement
 const spriteSize = 16
+
+var lastLoop = new Date()
+
+function gameLoop(){
+  // ...
+  let thisLoop = new Date()
+  var thisFrameTime = Number(thisLoop) - Number(lastLoop);
+  lastLoop = thisLoop;
+  return 1000/thisFrameTime
+}
+
 
 let ballonArray:Ballon[] = []
 let canvasArray:HTMLCanvasElement[] = []
@@ -68,13 +79,15 @@ export class Map {
 	}
 }
 let anim = function(){
+	// console.log(gameLoop())
+	let framrate = gameLoop()
 	ballonArray.forEach((el,i)=>{
 			el.ctx.reset()
-			el.GoAnim()
+			el.GoAnim(framrate)
 			// console.log("||",el.x,",",el.y)
 		}
 	)
-	setTimeout(window.requestAnimationFrame,1000/60,anim)
+	setTimeout(window.requestAnimationFrame,1000/Number(data.settings.framerate),anim)
 }
 setTimeout(() => {
 	anim()
