@@ -15,7 +15,6 @@ function gameLoop(){
 abstract class Entity{
     public x:number
     public y:number
-    abstract currentFrame:number
     public hp = 1
     constructor(x:number,y:number){
         this.x=x
@@ -48,6 +47,7 @@ class Ballon extends Entity{
         this.mapscale = mapscale
     }
     Draw(i:number){
+        this.ctx.imageSmoothingEnabled=false
         this.ctx.drawImage(
             this.spritesheet,
             this.spriteSize * this.frameData[i] + (this.x>this.nextx ? 3 : 0)*this.spriteSize,
@@ -77,4 +77,39 @@ class Ballon extends Entity{
         }
     }
 }
-export {Ballon}
+class Player extends Entity{
+    public currentFrame: number = 0
+    // public frameData: number[] = [0,1,2]
+    public frameDuration = 10
+    public currentTick = 0
+    public transx:number = 0
+    public transy:number = 0
+    public ctx:CanvasRenderingContext2D
+    public spritesheet:HTMLImageElement
+    public spriteSize:number
+    public mapscale:number
+    constructor(x:number,y:number,ctx:CanvasRenderingContext2D,spritesheet:HTMLImageElement,spriteSize:number,mapscale:number){
+        super(x,y)
+        this.x=x
+        this.y=y
+        this.ctx = ctx
+        this.spritesheet = spritesheet
+        this.spriteSize = spriteSize
+        this.mapscale = mapscale
+    }
+    Draw(){
+        this.ctx.imageSmoothingEnabled=false
+        this.ctx.drawImage(
+            this.spritesheet,
+            this.spriteSize * 4,
+            this.spriteSize * 0,
+            this.spriteSize,
+            this.spriteSize,
+            this.spriteSize * this.x * this.mapscale +(this.transx*this.spriteSize*this.mapscale),
+            this.spriteSize * this.y * this.mapscale+(this.transy*this.spriteSize*this.mapscale),
+            this.spriteSize * this.mapscale,
+            this.spriteSize * this.mapscale
+        )
+    }
+}
+export {Ballon, Player}

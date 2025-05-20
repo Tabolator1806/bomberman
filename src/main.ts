@@ -1,19 +1,21 @@
 import { init, send, websocket } from './connection'
-import {Ballon} from './entities'
+import {Ballon,Player} from './entities'
 import data from './global.json' with {type:"json"}
 init()
 document.querySelector("#send")?.addEventListener("click", () => { send() })
 
 const spritesheet = document.createElement("img")
 spritesheet.src = "src/SpriteSheet.png"
-let mapscale = 4
+let mapscale = 2
 
 const gameMap: HTMLCanvasElement = document.querySelector("#gamemap") as HTMLCanvasElement
-// const entityMap: HTMLCanvasElement = document.querySelector(".entitymap") as HTMLCanvasElement
+const playerMap: HTMLCanvasElement = document.querySelector("#playermap") as HTMLCanvasElement
+const playerContext = playerMap.getContext("2d") as CanvasRenderingContext2D
 const spriteSize = 16
 
 var lastLoop = new Date()
-
+const player = new Player(1,1,playerContext,spritesheet,spriteSize,mapscale)
+player.Draw()
 function gameLoop(){
   // ...
   let thisLoop = new Date()
@@ -53,6 +55,8 @@ export class Map {
 		var dataArray = JSON.parse(data)
 		gameMap.width = dataArray.gamedata.mapdata.mapWidth * mapscale * spriteSize
 		gameMap.height = dataArray.gamedata.mapdata.mapHeight * mapscale * spriteSize
+		playerMap.width = dataArray.gamedata.mapdata.mapWidth * mapscale * spriteSize
+		playerMap.height = dataArray.gamedata.mapdata.mapHeight * mapscale * spriteSize
 		dataArray.gamedata.mapdata.mapLayout.forEach((Array: Array<Object>) => {
 			Array.forEach((element:Object)=>{
 				context.drawImage(spritesheet,
@@ -61,7 +65,7 @@ export class Map {
 					spriteSize,
 					spriteSize,
 					spriteSize * element.x * mapscale,
-					spriteSize * element.y * mapscale  ,
+					spriteSize * element.y * mapscale,
 					spriteSize * mapscale,
 					spriteSize * mapscale)
 				context.imageSmoothingEnabled=false
@@ -70,13 +74,21 @@ export class Map {
 	}
 	EntityCreate(data:string):void{
 		var dataArray = JSON.parse(data)
-		dataArray.gamedata.entitydata.entityLayout.forEach((element: Object,i:number) => {
-			console.log(canvasArray[i])
+		dataArray.gamedata.entitydata.entityLayout.forEach((element: Ballon,i:number) => {
 			let context = canvasArray[i].getContext("2d") as CanvasRenderingContext2D
 			const a = new Ballon(element.x,element.y,element.nextx,element.nexty,context,spritesheet,spriteSize,mapscale)
 			ballonArray.push(a)
+			context = playerMap.getContext("2d") as CanvasRenderingContext2D
+			context.beginPath()
+			context.globalAlpha=0.5
+			context.rect(
+				element.nextx*spriteSize*mapscale,
+				element.nexty*spriteSize*mapscale,
+				spriteSize*mapscale,
+				spriteSize*mapscale
+			)
+			context.fill()
 		});
-		
 	}
 }
 let average = 0
@@ -87,11 +99,9 @@ let anim = function(){
 	averageCount+=1
 	let fpsCounter = document.querySelector("#fps") as HTMLParagraphElement
 	fpsCounter.innerText = `${average/averageCount} fps`
-	ballonArray.forEach((el,i)=>{
+	ballonArray.forEach(el=>{
 			el.ctx.reset()
-			el.ctx.imageSmoothingEnabled=false
 			el.GoAnim(framrate)
-			// console.log("||",el.x,",",el.y)
 		}
 	)
 	setTimeout(window.requestAnimationFrame,1000/Number(data.settings.framerate),anim)
