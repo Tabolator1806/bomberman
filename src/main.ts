@@ -6,7 +6,7 @@ document.querySelector("#send")?.addEventListener("click", () => { send() })
 
 const spritesheet = document.createElement("img")
 spritesheet.src = "src/SpriteSheet.png"
-let mapscale = 3
+let mapscale = 4
 
 const gameMap: HTMLCanvasElement = document.querySelector("#gamemap") as HTMLCanvasElement
 // const entityMap: HTMLCanvasElement = document.querySelector(".entitymap") as HTMLCanvasElement
@@ -64,6 +64,7 @@ export class Map {
 					spriteSize * element.y * mapscale  ,
 					spriteSize * mapscale,
 					spriteSize * mapscale)
+				context.imageSmoothingEnabled=false
 			})
 		});
 	}
@@ -88,6 +89,7 @@ let anim = function(){
 	fpsCounter.innerText = `${average/averageCount} fps`
 	ballonArray.forEach((el,i)=>{
 			el.ctx.reset()
+			el.ctx.imageSmoothingEnabled=false
 			el.GoAnim(framrate)
 			// console.log("||",el.x,",",el.y)
 		}

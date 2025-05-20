@@ -25,8 +25,8 @@ abstract class Entity{
 
 class Ballon extends Entity{
     public currentFrame: number = 0
-    public frameData: number[] = [0,2,1]
-    public frameDuration = 20
+    public frameData: number[] = [0,1,2]
+    public frameDuration = 10
     public currentTick = 0
     public nextx:number
     public nexty:number
