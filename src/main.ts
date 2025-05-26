@@ -16,6 +16,7 @@ const spriteSize = 16
 var lastLoop = new Date()
 const player = new Player(1,1,playerContext,spritesheet,spriteSize,mapscale)
 player.Draw()
+console.log(player)
 function gameLoop(){
   // ...
   let thisLoop = new Date()
@@ -79,15 +80,15 @@ export class Map {
 			const a = new Ballon(element.x,element.y,element.nextx,element.nexty,context,spritesheet,spriteSize,mapscale)
 			ballonArray.push(a)
 			context = playerMap.getContext("2d") as CanvasRenderingContext2D
-			context.beginPath()
-			context.globalAlpha=0.5
-			context.rect(
-				element.nextx*spriteSize*mapscale,
-				element.nexty*spriteSize*mapscale,
-				spriteSize*mapscale,
-				spriteSize*mapscale
-			)
-			context.fill()
+			// context.beginPath()
+			// context.globalAlpha=0.5
+			// context.rect(
+			// 	element.nextx*spriteSize*mapscale,
+			// 	element.nexty*spriteSize*mapscale,
+			// 	spriteSize*mapscale,
+			// 	spriteSize*mapscale
+			// )
+			// context.fill()
 		});
 	}
 }
@@ -112,13 +113,12 @@ setTimeout(() => {
 
 let mapDraw = new Map
 websocket.onmessage = function (ev) {
+	console.log(JSON.parse(ev.data))
 	if (ev.data != "")
 		try { //PHP sends Json data
-			// console.log(JSON.parse(ev.data))
 			mapDraw.CanvasDraw(ev.data)
 			mapDraw.MapDraw(ev.data);
 			mapDraw.EntityCreate(ev.data);
-			// spritesheet.onload=()=>mapDraw.CanvasDraw(ev.data)
 		} catch (error) {
 			//console.error(error);
 			//console.log(ev.data);
