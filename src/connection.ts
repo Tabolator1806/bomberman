@@ -10,6 +10,12 @@ function send() {
 function init() {
     websocket.onopen = function (ev) { // connection is open
         //console.log("open");
+        // let utterance = new SpeechSynthesisUtterance("Hello world!");
+        // speechSynthesis.speak(utterance);
+        let syntesis = window.speechSynthesis
+        let voices = syntesis.getVoices()
+        console.log(voices)
+
     }
 
     //#### Message received from server
@@ -26,6 +32,12 @@ function init() {
     websocket.onerror = function (ev) {
         //  console.log(ev.data);
     };
+    websocket.onclose = (ev) => {
+        alert("Serwer nieodpowiada")
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000);
+    }
 };
 
 function receive() {
