@@ -1,5 +1,5 @@
 
-let wsUri = "ws://localhost:46089";
+let wsUri = "ws://192.168.209.42:46089";
 const websocket = new WebSocket(wsUri);
 function send() {
     var msg = {
@@ -10,11 +10,9 @@ function send() {
 function init() {
     websocket.onopen = function (ev) { // connection is open
         //console.log("open");
-        // let utterance = new SpeechSynthesisUtterance("Hello world!");
-        // speechSynthesis.speak(utterance);
-        let syntesis = window.speechSynthesis
-        let voices = syntesis.getVoices()
-        console.log(voices)
+        // let syntesis = window.speechSynthesis
+        // let voices = syntesis.getVoices()
+        // console.log(voices)
 
     }
 
@@ -32,12 +30,12 @@ function init() {
     websocket.onerror = function (ev) {
         //  console.log(ev.data);
     };
-    websocket.onclose = (ev) => {
-        alert("Serwer nieodpowiada")
-        setTimeout(() => {
-            window.location.reload()
-        }, 1000);
-    }
+    // websocket.onclose = (ev) => {
+    //     alert("Serwer nieodpowiada")
+    //     setTimeout(() => {
+    //         window.location.reload()
+    //     }, 1000);
+    // }
 };
 
 function receive() {

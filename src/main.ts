@@ -2,6 +2,9 @@ import { init, send, websocket } from './connection'
 import {Ballon,Player} from './entities'
 import data from './global.json' with {type:"json"}
 init()
+
+let utterance = new SpeechSynthesisUtterance("Hello world!");
+speechSynthesis.speak(utterance);
 document.querySelector("#send")?.addEventListener("click", () => { send() })
 
 const spritesheet = document.createElement("img")
@@ -18,7 +21,6 @@ const player = new Player(1,1,playerContext,spritesheet,spriteSize,mapscale)
 player.Draw()
 console.log(player)
 function gameLoop(){
-  // ...
   let thisLoop = new Date()
   var thisFrameTime = Number(thisLoop) - Number(lastLoop);
   lastLoop = thisLoop;
